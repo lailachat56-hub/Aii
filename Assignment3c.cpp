@@ -1,9 +1,3 @@
-๏ปฟ// ู…ุดุฑูุน ุงูุฐูุงุก ุงูุงุตุทูุงุนู CS456 - ุงููุงุฌุจ ุงูุซุงูุซ - ุงูู…ุฑุญูุฉ ุงูุซุงููุฉ: ุงููู…ูุฉ ุฏุงุฎู ุงูู…ุชุงูุฉ ุงูู…ุบู…ูุฑุฉ ุจุงูู…ูุงู
-// ูุฐู ุงููุณุฎุฉ ุชุญุงูุธ ุนูู ุงูุฎูุงุฑุฒู…ูุงุช ูุงูู…ุชุงูุฉ ูุงูุงุฎุชุจุงุฑุงุช ูุงูุชุญููู ูู…ุง ูู ุงูููุฏ ุงูู…ุนุชู…ุฏ.
-// ุงูุญุฑูุฉ ูู ุฃุฑุจุนุฉ ุงุชุฌุงูุงุช ููุทุ ูุชูููุฉ ูู ุญุฑูุฉ 1ุ ูุงูุฎูุงูุง ุงูู…ุบู…ูุฑุฉ ุจุงูู…ูุงู (~) ูุงุจูุฉ ููุนุจูุฑ.
-// ุงูุจุญุซ ุงูุฌุดุน ูุนุชู…ุฏ ุนูู h ููุทุ ูุฎูุงุฑุฒู…ูุฉ A* ุชุนุชู…ุฏ ุนูู g+hุ ููุง ูุถูู ุญุฑูุฉ ุงูุจูุงุก ูู ุงูู…ูุงู.
-// ูู…ูู ุชุดุบูู ุงูู…ูู ูู Code::Blocks ุจุงุณุชุฎุฏุงู… ู…ุนูุงุฑ C++17.
-// ุงูู…ูุชุจุงุช ุงูู…ุทููุจุฉ ููุฅุฏุฎุงู ูุงูุฅุฎุฑุงุฌ ูุงูู…ููุงุช ูุงูู…ุตูููุงุช ูุทุงุจูุฑ ุงูุฃููููุฉ ูุงูุญุณุงุจุงุช ูุงูููุช
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -16,16 +10,16 @@
 #include <stdexcept>
 using namespace std;
 
-// ูู…ุซู ู…ูุถุน ุงููู…ูุฉ ุฏุงุฎู ุงูู…ุชุงูุฉ ุจุงุณุชุฎุฏุงู… ุฑูู… ุงูุตู ูุงูุนู…ูุฏ (ุฏุงุฎูููุง ูุจุฏุฃ ุงูุนุฏ ู…ู ุตูุฑ).
+// ํใหแ ใๆึฺ วแไใแษ ฯวฮแ วแใสวๅษ ศวำสฮฯวใ ัÞใ วแีÝ ๆวแฺใๆฯ (ฯวฮแํ๐ว ํศฯร วแฺฯ ใไ ีÝั).
 struct Position {
     int row, col;
-    // ู…ูุงุฑูุฉ ู…ูุถุนูู ูู…ุนุฑูุฉ ูู ูุดูุฑุงู ุฅูู ุงูุฎููุฉ ููุณูุง.
+    // ใÞวัไษ ใๆึฺํไ แใฺัÝษ ๅแ ํิํัวไ ลแ์ วแฮแํษ ไÝำๅว.
     bool operator==(const Position& other) const {
         return row == other.row && col == other.col;
     }
 };
 
-// ูุฌู…ุน ูุชูุฌุฉ ุนู…ููุฉ ุงูุจุญุซ: ุงููุตูู ูููุฏู ูุงูุชูููุฉ ูุฅุญุตุงุกุงุช ุงูุฃุฏุงุก ูุงูู…ุณุงุฑ ุงูููุงุฆู.
+// ํฬใฺ ไสํฬษ ฺใแํษ วแศอห: วแๆีๆแ แแๅฯÝ ๆวแส฿แÝษ ๆลอีวมวส วแรฯวม ๆวแใำวั วแไๅวฦํ.
 struct SearchResult {
     bool found = false;
     int pathCost = -1;
@@ -36,23 +30,23 @@ struct SearchResult {
     vector<Position> path;
 };
 
-// ุงูุตูู ุงูุฑุฆูุณู ุงูู…ุณุคูู ุนู ุชุฎุฒูู ุงูู…ุชุงูุฉ ูุชุดุบูู ุฎูุงุฑุฒู…ูุงุช ุงูุจุญุซ ูุชุญููู ุงููุชุงุฆุฌ.
+// วแีไÝ วแัฦํำํ วแใำฤๆแ ฺไ สฮาํไ วแใสวๅษ ๆสิÛํแ ฮๆวัาใํวส วแศอห ๆสอแํแ วแไสวฦฬ.
 class MazeSolver {
 private:
-    // ุชุฎุฒูู ุตููู ุงูู…ุชุงูุฉ ูุฃุจุนุงุฏูุง ูู…ููุน ุงูุทุนุงู… ูููุงุท ุงูุจุฏุงูุฉ ุงูู…ูุฌูุฏุฉ ูู ุงูู…ูู.
+    // สฮาํไ ีÝๆÝ วแใสวๅษ ๆรศฺวฯๅว ๆใๆÞฺ วแฺุวใ ๆไÞวุ วแศฯวํษ วแใๆฬๆฯษ Ýํ วแใแÝ.
     vector<string> maze;
     int rows = 0, cols = 0;
     Position goal = {-1, -1};
     vector<Position> fileStarts;
 
-    // ุนูุตุฑ ุฏุงุฎู ูุงุฆู…ุฉ ุงูุงูุชุธุงุฑ: ุงูุฃููููุฉ ูุชุฑุชูุจ ุงูุฅุฏุฎุงู ูุงูุชูููุฉ ุงููุนููุฉ ูุงูู…ูุถุน.
+    // ฺไีั ฯวฮแ Þวฦใษ วแวไสูวั: วแรๆแๆํษ ๆสัสํศ วแลฯฮวแ ๆวแส฿แÝษ วแÝฺแํษ ๆวแใๆึฺ.
     struct Entry {
         double priority;
         int serial;
         int g;
         Position pos;
     };
-    // ุชุฑุชูุจ ูุงุฆู…ุฉ ุงูุฃููููุฉ: ุงูุฃูู ูู f ุฃููุงูุ ุซู… ุงูุตูุ ุซู… ุงูุนู…ูุฏุ ุซู… ุงูุฃุณุจู ุฅุฏุฎุงูุงู.
+    // สัสํศ Þวฦใษ วแรๆแๆํษ: วแรÞแ Ýํ f รๆแว๐ก หใ วแีÝก หใ วแฺใๆฯก หใ วแรำศÞ ลฯฮวแว๐.
     struct Compare {
         bool operator()(const Entry& a, const Entry& b) const {
             if (fabs(a.priority - b.priority) > 1e-9) return a.priority > b.priority;
@@ -61,22 +55,22 @@ private:
             return a.serial > b.serial;
         }
     };
-    // ุงูุชุญูู ู…ู ุฃู ุงูู…ูุถุน ุฏุงุฎู ุญุฏูุฏ ุงูู…ุชุงูุฉ.
+    // วแสอÞÞ ใไ รไ วแใๆึฺ ฯวฮแ อฯๆฯ วแใสวๅษ.
     bool inside(Position p) const {
         return p.row >= 0 && p.row < rows && p.col >= 0 && p.col < cols;
     }
-    // ูุณู…ุญ ุจุงูู…ุฑูุฑ ูู ุงูุฎูุงูุง ุงููุงุฑุบุฉ ูุงูู…ุบู…ูุฑุฉ ุจุงูู…ูุงูุ ููู…ูุน ุงูุฌุฏุฑุงู (#).
+    // ํำใอ ศวแใัๆั Ýํ วแฮแวํว วแÝวัÛษ ๆวแใÛใๆัษ ศวแใํวๅก ๆํใไฺ วแฬฯัวไ (#).
     bool passable(Position p) const {
         return inside(p) && maze[p.row][p.col] != '#';
     }
-    // ุญุณุงุจ ุงูู…ุณุงูุฉ ุงูุชุฎู…ูููุฉ ุฅูู ุงููุฏู: ู…ุงููุงุชู ุฃู ุฅูููุฏูุฉ ุญุณุจ ุงูุงุฎุชูุงุฑ.
+    // อำวศ วแใำวÝษ วแสฮใํไํษ ลแ์ วแๅฯÝ: ใวไๅวสไ รๆ ลÞแํฯํษ อำศ วแวฮสํวั.
     double heuristic(Position p, bool manhattan) const {
         int dr = abs(p.row - goal.row);
         int dc = abs(p.col - goal.col);
         if (manhattan) return double(dr + dc);
         return sqrt(double(dr * dr + dc * dc));
     }
-    // ูุญุต ุณูุงู…ุฉ ุงูู…ุชุงูุฉ ูุชุญุฏูุฏ ุงููุฏู ูุชุญููู ุฑู…ุฒ ุงูุจุฏุงูุฉ S ุฅูู ุฎููุฉ ุนุงุฏูุฉ.
+    // Ýอี ำแวใษ วแใสวๅษ ๆสอฯํฯ วแๅฯÝ ๆสอๆํแ ัใา วแศฯวํษ S ลแ์ ฮแํษ ฺวฯํษ.
     void validateAndPrepare() {
         if (maze.empty()) throw runtime_error("Maze is empty");
         rows = (int)maze.size();
@@ -96,9 +90,9 @@ private:
         if (foodCount != 1) throw runtime_error("Maze must contain exactly one X goal");
     }
 public:
-    // ุงูู…ููุดุฆ: ูุณุชูุจู ุงูู…ุชุงูุฉ ููุฌุฑู ูุญุตูุง ุฃููููุง ููุง.
+    // วแใ๕ไิฦ: ํำสÞศแ วแใสวๅษ ๆํฬัํ Ýอี๐ว รๆแํ๐ว แๅว.
     explicit MazeSolver(const vector<string>& grid) : maze(grid) { validateAndPrepare(); }
-    // ูุฑุงุกุฉ ู…ุชุงูุฉ ุงุฎุชูุงุฑูุฉ ู…ู ู…ูู ูุตู ู…ุน ุชุฌุงูู ุงููุฑุงุบุงุช ุจูู ุงูุฑู…ูุฒ.
+    // Þัวมษ ใสวๅษ วฮสํวัํษ ใไ ใแÝ ไีํ ใฺ สฬวๅแ วแÝัวÛวส ศํไ วแัใๆา.
     static vector<string> loadFromFile(const string& path) {
         ifstream in(path);
         if (!in) throw runtime_error("Cannot open file: " + path);
@@ -112,11 +106,11 @@ public:
         }
         return grid;
     }
-    // ุฅุฑุฌุงุน ู…ูุงูุน ุงูุจุฏุงูุฉ ุงูู…ุญุฏุฏุฉ ุจุฑู…ุฒ S ูู ู…ูู ุงูู…ุชุงูุฉ.
+    // ลัฬวฺ ใๆวÞฺ วแศฯวํษ วแใอฯฯษ ศัใา S Ýํ ใแÝ วแใสวๅษ.
     const vector<Position>& startsFromMaze() const { return fileStarts; }
-    // ุงูุชุฃูุฏ ู…ู ุตูุงุญูุฉ ููุทุฉ ุงูุจุฏุงูุฉ ูุฃููุง ููุณุช ุฌุฏุงุฑูุง ุฃู ุฎุงุฑุฌ ุงูุญุฏูุฏ.
+    // วแสร฿ฯ ใไ ีแวอํษ ไÞุษ วแศฯวํษ ๆรไๅว แํำส ฬฯวั๐ว รๆ ฮวัฬ วแอฯๆฯ.
     bool validStart(Position p) const { return passable(p); }
-    // ุทุจุงุนุฉ ุงูู…ุชุงูุฉ ุนูู ุงูุดุงุดุฉ ูุฅุธูุงุฑ ู…ูุถุน ุงูุจุฏุงูุฉ ุงูู…ุฎุชุงุฑ ุจุฑู…ุฒ S.
+    // ุศวฺษ วแใสวๅษ ฺแ์ วแิวิษ ๆลูๅวั ใๆึฺ วแศฯวํษ วแใฮสวั ศัใา S.
     void printMaze(Position start) const {
         cout << "Maze (. empty, ~ flooded, # wall, X goal, S start):\n";
         for (int r = 0; r < rows; ++r) {
@@ -128,7 +122,7 @@ public:
             cout << '\n';
         }
     }
-    // ุงุณุชุฎุฏุงู… BFS ู…ู ุงููุฏู ูุญุณุงุจ ุฃูู ุนุฏุฏ ุญุฑูุงุช ุญูููู ููู ุฎููุฉ ูุงุจูุฉ ูููุตูู.
+    // วำสฮฯวใ BFS ใไ วแๅฯÝ แอำวศ รÞแ ฺฯฯ อั฿วส อÞํÞํ แ฿แ ฮแํษ Þวศแษ แแๆีๆแ.
     vector<vector<int>> distancesFromGoal() const {
         vector<vector<int>> dist(rows, vector<int>(cols, -1));
         queue<Position> q;
@@ -148,7 +142,7 @@ public:
         }
         return dist;
     }
-    // ุชุญููู ุงูุฏุงูุชูู ุงูุชุฎู…ูููู‘ุชูู ูู…ูุงุฑูุชูู…ุง ุจุงูุชูููุฉ ุงูุญููููุฉ ูุงูุชุญูู ู…ู ุงูู…ูุจูููุฉ ูุงูุงุชุณุงู.
+    // สอแํแ วแฯวแสํไ วแสฮใํไํ๘สํไ ๆใÞวัไสๅใว ศวแส฿แÝษ วแอÞํÞํษ ๆวแสอÞÞ ใไ วแใÞศๆแํษ ๆวแวสำวÞ.
     void printHeuristicReport() const {
         auto dist = distancesFromGoal();
         int cells = 0, h1Bad = 0, h2Bad = 0, h2Greater = 0, h1Cons = 0, h2Cons = 0;
@@ -190,17 +184,17 @@ public:
         cout << "(h2 >= h1, so Manhattan dominates Euclidean here.)\n";
         cout << defaultfloat;
     }
-    // ุชูููุฐ Greedy ุฃู A* ุญุณุจ useAStarุ ูุงุฎุชูุงุฑ ู…ุงููุงุชู ุฃู ุฅูููุฏูุฉ ุญุณุจ manhattan.
+    // สไÝํะ Greedy รๆ A* อำศ useAStarก ๆวฮสํวั ใวไๅวสไ รๆ ลÞแํฯํษ อำศ manhattan.
     SearchResult search(Position start, bool useAStar, bool manhattan) const {
         SearchResult result;
         if (!validStart(start)) return result;
         auto t0 = chrono::high_resolution_clock::now();
         const int INF = 1000000000;
-        // best: ุฃูุถู ุชูููุฉ ู…ุนุฑููุฉุ closed: ุงูุนูุฏ ุงูุชู ุนููุฌุชุ parent: ูุงุณุชุนุงุฏุฉ ุงูู…ุณุงุฑ.
+        // best: รÝึแ ส฿แÝษ ใฺัๆÝษบ closed: วแฺÞฯ วแสํ ฺๆแฬสบ parent: แวำสฺวฯษ วแใำวั.
         vector<vector<int>> best(rows, vector<int>(cols, INF));
         vector<vector<bool>> closed(rows, vector<bool>(cols, false));
         vector<vector<Position>> parent(rows, vector<Position>(cols, Position{-1, -1}));
-        // ูุงุฆู…ุฉ ุงูุนูุฏ ุงูู…ุฑุดุญุฉ ููุฒูุงุฑุฉ ู…ุฑุชุจุฉ ููู ุงูุฃููููุฉ.
+        // Þวฦใษ วแฺÞฯ วแใัิอษ แแาํวัษ ใัสศษ ๆÝÞ วแรๆแๆํษ.
         priority_queue<Entry, vector<Entry>, Compare> frontier;
         int serial = 0;
         best[start.row][start.col] = 0;
@@ -209,15 +203,15 @@ public:
         result.maxFrontier = 1;
         const int dr[4] = {-1, 0, 1, 0};
         const int dc[4] = {0, 1, 0, -1};
-        // ุชูุฑุงุฑ ุงุฎุชูุงุฑ ุงูุนูุฏุฉ ุฐุงุช ุงูุฃููููุฉ ุงูุฃูุถู ุญุชู ุงููุตูู ูููุฏู ุฃู ููุงุฏ ุงูุนูุฏ.
+        // ส฿ัวั วฮสํวั วแฺÞฯษ ะวส วแรๆแๆํษ วแรÝึแ อส์ วแๆีๆแ แแๅฯÝ รๆ ไÝวฯ วแฺÞฯ.
         while (!frontier.empty()) {
             Entry current = frontier.top(); frontier.pop();
             Position p = current.pos;
-            // ุชุฌุงูู ุงูุฅุฏุฎุงูุงุช ุงููุฏูู…ุฉ ุฃู ุงูุนูุฏ ุงูู…ุบููุฉ ุญุชู ูุง ููุฑุฑ ู…ุนุงูุฌุฉ ุงูุญุงูุฉ ููุณูุง.
+            // สฬวๅแ วแลฯฮวแวส วแÞฯํใษ รๆ วแฺÞฯ วแใÛแÞษ อส์ แว ไ฿ัั ใฺวแฬษ วแอวแษ ไÝำๅว.
             if (current.g != best[p.row][p.col] || closed[p.row][p.col]) continue;
             closed[p.row][p.col] = true;
             ++result.expanded;
-            // ุนูุฏ ุงููุตูู ููุทุนุงู…ุ ูุณุชุนูุฏ ุงูู…ุณุงุฑ ู…ู ุงููุฏู ุฅูู ุงูุจุฏุงูุฉ ุซู… ูุนูุณู.
+            // ฺไฯ วแๆีๆแ แแฺุวใก ไำสฺํฯ วแใำวั ใไ วแๅฯÝ ลแ์ วแศฯวํษ หใ ไฺ฿ำๅ.
             if (p == goal) {
                 result.found = true;
                 result.pathCost = current.g;
@@ -234,14 +228,14 @@ public:
                 Position next = {p.row + dr[i], p.col + dc[i]};
                 if (!passable(next)) continue;
                 int candidateG = current.g + 1;
-                // A* ุชูุจู ู…ุณุงุฑูุง ุฃูู ุชูููุฉ ูุชุณู…ุญ ุจุฅุนุงุฏุฉ ูุชุญ ุงูุนูุฏุฉุ Greedy ุชูุจู ุงูุฒูุงุฑุฉ ุงูุฃููู ููุท.
+                // A* สÞศแ ใำวั๐ว รÞแ ส฿แÝษ ๆสำใอ ศลฺวฯษ Ýสอ วแฺÞฯษบ Greedy สÞศแ วแาํวัษ วแรๆแ์ ÝÞุ.
                 bool accept = useAStar ? (candidateG < best[next.row][next.col])
                                        : (best[next.row][next.col] == INF);
                 if (!accept) continue;
                 best[next.row][next.col] = candidateG;
                 parent[next.row][next.col] = p;
                 closed[next.row][next.col] = false;
-                // ุญุณุงุจ ุงูุฃููููุฉ: ูู A* ูุถูู g ุฅูู hุ ููู Greedy ูุณุชุฎุฏู… h ูุญุฏูุง.
+                // อำวศ วแรๆแๆํษ: Ýํ A* ไึํÝ g ลแ์ hก ๆÝํ Greedy ไำสฮฯใ h ๆอฯๅว.
                 double priority = (useAStar ? candidateG : 0) + heuristic(next, manhattan);
                 frontier.push({priority, serial++, candidateG, next});
                 ++result.generated;
@@ -249,11 +243,11 @@ public:
             }
         }
         auto t1 = chrono::high_resolution_clock::now();
-        // ุญุณุงุจ ุฒู…ู ุงูุชูููุฐ ุจุงูู…ููุฑูุซุงููุฉ ูุฃุบุฑุงุถ ุงูู…ูุงุฑูุฉ ุงูุชุฌุฑูุจูุฉ.
+        // อำวศ าใไ วแสไÝํะ ศวแใํ฿ัๆหวไํษ แรÛัวึ วแใÞวัไษ วแสฬัํศํษ.
         result.timeMicros = chrono::duration<double, micro>(t1 - t0).count();
         return result;
     }
-    // ุงุฎุชุจุงุฑ ููุทุฉ ุจุฏุงูุฉ ูุงุญุฏุฉ ุจุงุณุชุฎุฏุงู… ุงูุฎูุงุฑุฒู…ูุงุช ุงูุฃุฑุจุน ูุทุจุงุนุฉ ุงููุชุงุฆุฌ ูุญูุธูุง ูู CSV.
+    // วฮสศวั ไÞุษ ศฯวํษ ๆวอฯษ ศวำสฮฯวใ วแฮๆวัาใํวส วแรัศฺ ๆุศวฺษ วแไสวฦฬ ๆอÝูๅว Ýํ CSV.
     void runCase(Position start, ofstream* csv) const {
         cout << "\n======================================================\n";
         cout << "Start (row,column) = (" << start.row + 1 << ',' << start.col + 1 << ")\n";
@@ -263,7 +257,7 @@ public:
         }
         printMaze(start);
         auto dist = distancesFromGoal();
-        // ุชูููุฉ BFS ุงูู…ุฑุฌุนูุฉ ุชูุณุชุฎุฏู… ููุชุญูู ู…ู ุฃู ุงูู…ุณุงุฑ ุงููุงุชุฌ ุฃู…ุซู.
+        // ส฿แÝษ BFS วแใัฬฺํษ ส๕ำสฮฯใ แแสอÞÞ ใไ รไ วแใำวั วแไวสฬ รใหแ.
         int optimal = dist[start.row][start.col];
         cout << "True optimal cost (BFS) = " << (optimal < 0 ? string("Unreachable") : to_string(optimal)) << '\n';
         const string names[4] = {"Greedy + Euclidean", "Greedy + Manhattan",
@@ -271,7 +265,7 @@ public:
         cout << left << setw(22) << "Algorithm" << setw(7) << "Found" << setw(7) << "Cost"
              << setw(9) << "Optimal?" << setw(9) << "Expanded" << setw(10) << "Generated"
              << setw(10) << "MaxFront" << "Time(us)\n";
-        // ุชุดุบูู Greedy ู…ุน ุงูุฏุงูุชููุ ุซู… A* ู…ุน ุงูุฏุงูุชููุ ุจุงูุชุฑุชูุจ ููุณู.
+        // สิÛํแ Greedy ใฺ วแฯวแสํไก หใ A* ใฺ วแฯวแสํไก ศวแสัสํศ ไÝำๅ.
         for (int i = 0; i < 4; ++i) {
             SearchResult r = search(start, i >= 2, i % 2 == 1);
             bool isOptimal = r.found && r.pathCost == optimal;
@@ -288,7 +282,7 @@ public:
                 cout << '(' << r.path[j].row + 1 << ',' << r.path[j].col + 1 << ')';
             }
             cout << '\n';
-            // ุชุณุฌูู ูุชุงุฆุฌ ูุฐู ุงูุชุฌุฑุจุฉ ูู ู…ูู ุงููุชุงุฆุฌ ูุชุญููููุง ูู ุงูุชูุฑูุฑ.
+            // สำฬํแ ไสวฦฬ ๅะๅ วแสฬัศษ Ýํ ใแÝ วแไสวฦฬ แสอแํแๅว Ýํ วแสÞัํั.
             if (csv && csv->is_open()) {
                 *csv << start.row + 1 << ':' << start.col + 1 << ',' << names[i] << ','
                      << (r.found ? 1 : 0) << ',' << r.pathCost << ',' << optimal << ','
@@ -299,13 +293,13 @@ public:
     }
 };
 
-// ููุทุฉ ุจุฏุก ุงูุจุฑูุงู…ุฌ: ุชุฌููุฒ ุงูู…ุชุงูุฉ ูุชุดุบูู ุงูุงุฎุชุจุงุฑุงุช ูุนุฑุถ ุงูุชูุฑูุฑ ูุงูุณู…ุงุญ ุจุฅุฏุฎุงู ูุฏูู.
+// ไÞุษ ศฯม วแศัไวใฬ: สฬๅํา วแใสวๅษ ๆสิÛํแ วแวฮสศวัวส ๆฺัึ วแสÞัํั ๆวแำใวอ ศลฯฮวแ ํฯๆํ.
 int main(int argc, char* argv[]) {
     try {
-        // ุงูู…ุชุงูุฉ ุงูุงูุชุฑุงุถูุฉ ุงูู…ุนุชู…ุฏุฉ: X ุงูุทุนุงู…ุ # ุฌุฏุงุฑุ ~ ู…ุงุก ูุงุจู ููุนุจูุฑุ . ุฎููุฉ ูุงุฑุบุฉ.
+        // วแใสวๅษ วแวÝสัวึํษ วแใฺสใฯษ: X วแฺุวใก # ฬฯวัก ~ ใวม Þวศแ แแฺศๆัก . ฮแํษ ÝวัÛษ.
         vector<string> grid = {"....X", "#~###", ".~...", "#~#.#", ".~..."};
         bool customMaze = false;
-        // ุนูุฏ ุชู…ุฑูุฑ ุงุณู… ู…ูู ู…ู ุณุทุฑ ุงูุฃูุงู…ุฑ ููุฑุฃ ุงูู…ุชุงูุฉ ู…ูู ุจุฏู ุงูู…ุชุงูุฉ ุงูุงูุชุฑุงุถูุฉ.
+        // ฺไฯ สใัํั วำใ ใแÝ ใไ ำุั วแรๆวใั ไÞัร วแใสวๅษ ใไๅ ศฯแ วแใสวๅษ วแวÝสัวึํษ.
         if (argc > 1) {
             grid = MazeSolver::loadFromFile(argv[1]);
             customMaze = true;
@@ -314,27 +308,27 @@ int main(int argc, char* argv[]) {
         cout << "CS456 Assignment 3 - Phase II: Ant in a Flooded Maze\n";
         cout << "Coordinates are 1-based (row,column). Flooded cells are passable. Four moves.\n";
         vector<Position> starts = solver.startsFromMaze();
-        // ุฅู ูู… ุชูุฌุฏ ููุทุฉ S ูู ุงูู…ููุ ูุณุชุฎุฏู… ุฎู…ุณ ููุงุท ุงุฎุชุจุงุฑ ู…ุญุฏุฏุฉ ู…ุณุจููุง.
+        // ลไ แใ สๆฬฯ ไÞุษ S Ýํ วแใแÝก ไำสฮฯใ ฮใำ ไÞวุ วฮสศวั ใอฯฯษ ใำศÞ๐ว.
         if (starts.empty()) {
             if (!customMaze) starts = {{4,0}, {2,0}, {2,2}, {4,2}, {4,4}};
             else cout << "No S starts in the file; use manual input below.\n";
         }
-        // ุฅูุดุงุก ู…ูู CSV ูุชุณุฌูู ุจูุงูุงุช ุฌู…ูุน ุงูุชุฌุงุฑุจ.
+        // ลไิวม ใแÝ CSV แสำฬํแ ศํวไวส ฬใํฺ วแสฬวัศ.
         ofstream csv("results.csv");
         csv << "start,algorithm,found,cost,optimal_cost,expanded,generated,max_frontier,time_us\n";
         for (Position p : starts) solver.runCase(p, &csv);
-        // ุนุฑุถ ุงูุชุญููู ุงูููุงุฆู ููุฏุงูุชูู: Admissibility ูConsistency ูุงูู…ูุงุฑูุฉ ุจูููู…ุง.
+        // ฺัึ วแสอแํแ วแไๅวฦํ แแฯวแสํไ: Admissibility ๆConsistency ๆวแใÞวัไษ ศํไๅใว.
         solver.printHeuristicReport();
         cout << "\nCustom start: enter row and column (1-based), or 0 0 to quit: ";
         int r, c;
-        // ุชูุฑุงุฑ ุงูุชุฌุงุฑุจ ุงููุฏููุฉ ุญุชู ููุฏุฎู ุงูู…ุณุชุฎุฏู… 0 0 ูุฅููุงุก ุงูุจุฑูุงู…ุฌ.
+        // ส฿ัวั วแสฬวัศ วแํฯๆํษ อส์ ํ๕ฯฮแ วแใำสฮฯใ 0 0 แลไๅวม วแศัไวใฬ.
         while (cin >> r >> c && (r != 0 || c != 0)) {
             solver.runCase({r - 1, c - 1}, &csv);
             cout << "\nAnother start (0 0 to quit): ";
         }
         cout << "\nResults saved to results.csv\n";
     } catch (const exception& e) {
-        // ุฅุธูุงุฑ ุฑุณุงูุฉ ูุงุถุญุฉ ุนูุฏ ุญุฏูุซ ุฎุทุฃ ูู ุงูู…ูู ุฃู ุจูุงูุงุช ุงูู…ุชุงูุฉ.
+        // ลูๅวั ัำวแษ ๆวึอษ ฺไฯ อฯๆห ฮุร Ýํ วแใแÝ รๆ ศํวไวส วแใสวๅษ.
         cerr << "Error: " << e.what() << '\n';
         return 1;
     }
